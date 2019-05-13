@@ -51,7 +51,7 @@ $output_rules = array();
 $output_jumps = array();
 $x = $y = 1;
 $output_rules[] = "/ip firewall nat";
-for($i=1;$i<=($CGNAT_END-$CGNAT_START);$i++){
+for($i=0;$i<=($CGNAT_END-$CGNAT_START);++$i){
     $ip = long2ip($CGNAT_START+$i);
     $public = explode('.', $ip);
     $cgnat = explode('.', long2ip($CGNAT_IP));
@@ -69,6 +69,7 @@ for($i=1;$i<=($CGNAT_END-$CGNAT_START);$i++){
                 $output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" src-address=".long2ip($CGNAT_IP)." to-addresses={$ip}";
                 $output_rules[] = "add action=dst-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_IN\" protocol=tcp to-addresses=".long2ip($CGNAT_IP)." src-address={$ip} dst-port={$ports_start}-{$ports_end}";
                 $output_rules[] = "add action=dst-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_IN\" protocol=udp to-addresses=".long2ip($CGNAT_IP)." src-address={$ip} dst-port={$ports_start}-{$ports_end}";
+
                 $ports_start = $ports_end + 1;
                 $ports_end += $ports;
                 if($ports_end > 65535){
