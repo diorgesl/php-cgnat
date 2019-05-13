@@ -66,6 +66,7 @@ for($i=1;$i<=($CGNAT_END-$CGNAT_START);$i++){
             if($e_cgnat[3]>=0&&$e_cgnat[3]<=255) {
                 $output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" protocol=tcp src-address=".long2ip($CGNAT_IP)." to-addresses={$ip} to-ports={$ports_start}-{$ports_end}";
                 $output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" protocol=udp src-address=".long2ip($CGNAT_IP)." to-addresses={$ip} to-ports={$ports_start}-{$ports_end}";
+                $output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" src-address=".long2ip($CGNAT_IP)." to-addresses={$ip}";
                 $output_rules[] = "add action=dst-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_IN\" protocol=tcp to-addresses=".long2ip($CGNAT_IP)." src-address={$ip} dst-port={$ports_start}-{$ports_end}";
                 $output_rules[] = "add action=dst-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_IN\" protocol=udp to-addresses=".long2ip($CGNAT_IP)." src-address={$ip} dst-port={$ports_start}-{$ports_end}";
                 $ports_start = $ports_end + 1;
