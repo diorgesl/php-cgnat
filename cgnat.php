@@ -69,7 +69,7 @@ $subnet = array(
     '1'     => '/32'
 );
 
-if(in_array($CGNAT_RULES, array_keys($subnet))) {
+if(!in_array($CGNAT_RULES, array_keys($subnet))) {
     exit("-- Quantidade de regras deve ter o tamanho de uma máscara de subrede.\n\n");
 }
 
