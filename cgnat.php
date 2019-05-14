@@ -73,6 +73,10 @@ if(!in_array($CGNAT_RULES, array_keys($subnet))) {
     exit("-- Quantidade de regras deve ter o tamanho de uma máscara de subrede.\n\n");
 }
 
+if(file_exists($CGNAT_OUTPUT)){
+    unlink($CGNAT_OUTPUT);
+}
+
 $output_rules = array();
 $output_jumps = array();
 $x = $y = 1;
