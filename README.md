@@ -1,5 +1,6 @@
 ## php-cgnat
 Script PHP para gerar regras de CGNAT
+
 Este script foi inspirado no projeto https://github.com/helysonoliveira/cgnat-mikrotik
 
 ### Sistemas suportados
