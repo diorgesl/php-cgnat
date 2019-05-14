@@ -22,7 +22,7 @@ OPTIONS:
 -c                                           IP inicial do bloco CGNAT. ex.: 100.64.100.0
 -s                                           IP inicial dos ips publicos utilizados para o CGNAT.
 -e                                           IP final dos ips publicos utilizados para o CGNAT.
--t                                           Quantidade de regras por IP. ex.: 32
+-t                                           Quantidade de regras por IP. ex.: 4, 8, 16, 32 (Máscara subrede)
 -o                                           Nome do arquivo que será salvo as regras de CGNAT.
 -m                                           Gera regras para Mikrotik RouterOS.
 -i                                           Gera regras para iptables linux.
@@ -68,6 +68,10 @@ $subnet = array(
     '4'     => '/30',
     '1'     => '/32'
 );
+
+if(in_array($CGNAT_RULES, array_keys($subnet))) {
+    exit("-- Quantidade de regras deve ter o tamanho de uma máscara de subrede.\n\n");
+}
 
 $output_rules = array();
 $output_jumps = array();
