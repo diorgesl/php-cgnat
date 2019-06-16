@@ -88,7 +88,7 @@ for($i=0;$i<=($CGNAT_END-$CGNAT_START);++$i){
     $public = explode('.', $ip);
     $cgnat = explode('.', long2ip($CGNAT_IP));
     if(isset($options['m'])) {
-        $output_jumps[] = "add chain=srcnat src-address=\"".long2ip($CGNAT_IP)."-{$cgnat[0]}.{$cgnat[1]}.{$cgnat[2]}.".(($cgnat[3] + $CGNAT_RULES) - 1)."\" action=jump jump-target=\"CGNAT-{$public[2]}-{$public[3]}_OUT\"";
+        $output_jumps[] = "add chain=srcnat src-address=\"".long2ip($CGNAT_IP)."-".long2ip($CGNAT_IP+$CGNAT_RULES-1)."\" action=jump jump-target=\"CGNAT-{$public[2]}-{$public[3]}_OUT\"";
         $output_jumps[] = "add chain=dstnat dst-address={$ip} action=jump jump-target=\"CGNAT-{$public[2]}-{$public[3]}_IN\"";
     }elseif(isset($options['i'])){
         $output_jumps[] = "/sbin/iptables -t nat -A POSTROUTING -s ".long2ip($CGNAT_IP)."{$subnet[$CGNAT_RULES]} -j CGNAT_{$public[2]}_{$public[3]}_OUT";
