@@ -102,19 +102,16 @@ for($i=0;$i<=($CGNAT_END-$CGNAT_START);++$i){
                 if(isset($options['m'])) {
                     $output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" protocol=tcp src-address=".long2ip($CGNAT_IP)." to-addresses={$ip} to-ports={$ports_start}-{$ports_end}";
                     $output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" protocol=udp src-address=" .long2ip($CGNAT_IP)." to-addresses={$ip} to-ports={$ports_start}-{$ports_end}";
-                    $output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" src-address=".long2ip($CGNAT_IP)." to-addresses={$ip}";
                     $output_rules[] = "add action=dst-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_IN\" protocol=tcp to-addresses=".long2ip($CGNAT_IP)." src-address={$ip} dst-port={$ports_start}-{$ports_end}";
                     $output_rules[] = "add action=dst-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_IN\" protocol=udp to-addresses=".long2ip($CGNAT_IP)." src-address={$ip} dst-port={$ports_start}-{$ports_end}";
                 }elseif(isset($options['i'])) {
                     $output_rules[] = "/sbin/iptables -t nat -A CGNAT_{$public[2]}_{$public[3]}_OUT -s ".long2ip($CGNAT_IP)." -p tcp -j SNAT --to {$ip}:{$ports_start}-{$ports_end}";
                     $output_rules[] = "/sbin/iptables -t nat -A CGNAT_{$public[2]}_{$public[3]}_OUT -s ".long2ip($CGNAT_IP)." -p udp -j SNAT --to {$ip}:{$ports_start}-{$ports_end}";
-                    $output_rules[] = "/sbin/iptables -t nat -A CGNAT_{$public[2]}_{$public[3]}_OUT -s ".long2ip($CGNAT_IP)." -j SNAT --to {$ip}";
                     $output_rules[] = "/sbin/iptables -t nat -A CGNAT_{$public[2]}_{$public[3]}_IN -d {$ip} -p tcp --dport {$ports_start}:{$ports_end} -j DNAT --to ".long2ip($CGNAT_IP);
                     $output_rules[] = "/sbin/iptables -t nat -A CGNAT_{$public[2]}_{$public[3]}_IN -d {$ip} -p udp --dport {$ports_start}:{$ports_end} -j DNAT --to ".long2ip($CGNAT_IP);
                 }elseif(isset($options['n'])) {
-                    $output_rules[] = "add rule ip nat CGNAT_{$public[2]}_{$public[3]}_OUT ip protocol tcp ip saddr ".long2ip($CGNAT_IP)." counter snat {$ip} to {$ports_start}-{$ports_end}";
-                    $output_rules[] = "add rule ip nat CGNAT_{$public[2]}_{$public[3]}_OUT ip protocol tcp ip saddr ".long2ip($CGNAT_IP)." counter snat {$ip} to {$ports_start}-{$ports_end}";
-                    $output_rules[] = "add rule ip nat CGNAT_{$public[2]}_{$public[3]}_OUT ip saddr ".long2ip($CGNAT_IP)." counter snat to {$ip}";
+                    $output_rules[] = "add rule ip nat CGNAT_{$public[2]}_{$public[3]}_OUT ip protocol tcp ip saddr ".long2ip($CGNAT_IP)." counter snat to {$ip}:{$ports_start}-{$ports_end}";
+                    $output_rules[] = "add rule ip nat CGNAT_{$public[2]}_{$public[3]}_OUT ip protocol udp ip saddr ".long2ip($CGNAT_IP)." counter snat to {$ip}:{$ports_start}-{$ports_end}";
                     $output_rules[] = "add rule ip nat CGNAT_{$public[2]}_{$public[3]}_IN ip daddr {$ip} tcp dport {$ports_start}-{$ports_end} counter dnat to ".long2ip($CGNAT_IP);
                     $output_rules[] = "add rule ip nat CGNAT_{$public[2]}_{$public[3]}_IN ip daddr {$ip} udp dport {$ports_start}-{$ports_end} counter dnat to ".long2ip($CGNAT_IP);
                 }
@@ -129,8 +126,9 @@ for($i=0;$i<=($CGNAT_END-$CGNAT_START);++$i){
         }
         $x=$y;
         $CGNAT_RULES_COUNT+=$CGNAT_RULES;
-    }
-	if(isset($options['i'])){
+    }if(isset($options['m'])){
+        $output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" to-addresses={$ip}";
+	}elseif(isset($options['i'])){
         $output_rules[] = "/sbin/iptables -t nat -A CGNAT_{$public[2]}_{$public[3]}_OUT -j SNAT --to {$ip}";
     }elseif(isset($options['n'])){
 		$output_rules[] = "add rule ip nat CGNAT_{$public[2]}_{$public[3]}_OUT counter snat to {$ip}";
