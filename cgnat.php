@@ -78,15 +78,15 @@ for($i=0;$i<=($CGNAT_END-$CGNAT_START);++$i){
         $output_jumps[] = "add chain=srcnat src-address=\"".long2ip($CGNAT_IP)."-".long2ip($CGNAT_IP+$CGNAT_RULES-1)."\" action=jump jump-target=\"CGNAT-{$public[2]}-{$public[3]}_OUT\"";
         $output_jumps[] = "add chain=dstnat dst-address={$ip} action=jump jump-target=\"CGNAT-{$public[2]}-{$public[3]}_IN\"";
     }elseif(isset($options['i'])){
-        $output_jumps[] = "/sbin/iptables -t nat -A CGNATOUT -s ".long2ip($CGNAT_IP)."{$subnet[$CGNAT_RULES]} -j CGNAT_{$public[2]}_{$public[3]}_OUT";
-        $output_jumps[] = "/sbin/iptables -t nat -A CGNATIN -d {$ip}/32 -j CGNAT_{$public[2]}_{$public[3]}_IN";
+        $output_jumps[] = "/sbin/iptables -t nat -A POSTROUTING -s ".long2ip($CGNAT_IP)."{$subnet[$CGNAT_RULES]} -j CGNAT_{$public[2]}_{$public[3]}_OUT";
+        $output_jumps[] = "/sbin/iptables -t nat -A PREROUTING -d {$ip}/32 -j CGNAT_{$public[2]}_{$public[3]}_IN";
         $output_rules[] = "/sbin/iptables -t nat -N CGNAT_{$public[2]}_{$public[3]}_OUT";
         $output_rules[] = "/sbin/iptables -t nat -N CGNAT_{$public[2]}_{$public[3]}_IN";
         $output_rules[] = "/sbin/iptables -t nat -F CGNAT_{$public[2]}_{$public[3]}_OUT";
         $output_rules[] = "/sbin/iptables -t nat -F CGNAT_{$public[2]}_{$public[3]}_IN";
     }elseif(isset($options['n'])){
-        $output_jumps[] = "add rule ip nat CGNATOUT ip saddr ".long2ip($CGNAT_IP)."{$subnet[$CGNAT_RULES]} counter jump CGNAT_{$public[2]}_{$public[3]}_OUT";
-        $output_jumps[] = "add rule ip nat CGNATIN ip daddr {$ip}/32 counter jump CGNAT_{$public[2]}_{$public[3]}_IN";
+        $output_jumps[] = "add rule ip nat postrouting ip saddr ".long2ip($CGNAT_IP)."{$subnet[$CGNAT_RULES]} counter jump CGNAT_{$public[2]}_{$public[3]}_OUT";
+        $output_jumps[] = "add rule ip nat prerouting ip daddr {$ip}/32 counter jump CGNAT_{$public[2]}_{$public[3]}_IN";
         $output_rules[] = "add chain ip nat CGNAT_{$public[2]}_{$public[3]}_OUT";
         $output_rules[] = "add chain ip nat CGNAT_{$public[2]}_{$public[3]}_IN";
         $output_rules[] = "flush chain ip nat CGNAT_{$public[2]}_{$public[3]}_OUT";
@@ -126,10 +126,10 @@ for($i=0;$i<=($CGNAT_END-$CGNAT_START);++$i){
         }
         $x=$y;
         $CGNAT_RULES_COUNT+=$CGNAT_RULES;
-    }if(isset($options['m'])){
-        $output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" to-addresses={$ip}";
+	}if(isset($options['m'])){
+		$output_rules[] = "add action=src-nat chain=\"CGNAT-{$public[2]}-{$public[3]}_OUT\" to-addresses={$ip}";
 	}elseif(isset($options['i'])){
-        $output_rules[] = "/sbin/iptables -t nat -A CGNAT_{$public[2]}_{$public[3]}_OUT -j SNAT --to {$ip}";
+		$output_rules[] = "/sbin/iptables -t nat -A CGNAT_{$public[2]}_{$public[3]}_OUT -j SNAT --to {$ip}";
     }elseif(isset($options['n'])){
 		$output_rules[] = "add rule ip nat CGNAT_{$public[2]}_{$public[3]}_OUT counter snat to {$ip}";
     }
